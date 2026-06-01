@@ -7,11 +7,10 @@ Diagnostic-first reference. Match the symptom, apply the fix.
 | Symptom or error string | Likely cause | Fix |
 |-------------------------|--------------|-----|
 | `No config found. Run 'setup' or 'import' first.` | `~/.fortytwo/config.json` missing, or wrong profile active | `fortytwo setup` for a new node, or `fortytwo -p <name> …` to select the right profile |
-| `You are still a Challenger (rank X/42). Reach Capability 42 to create queries.` | tier is `challenger`, can't `ask` yet | keep farming; see [operation.md](operation.md) |
 | `Dead locked: yes` in `fortytwo capability` | all three balance buckets are empty while Challenger | `fortytwo reset --yes` — **loses accumulated rank** (back to 0), returns 250 FOR points to `challenge_locked`. Auto-reset was removed in v0.2.0 — must be manual. |
 | `Cannot reach OpenRouter API: 401` | wrong `openrouter_api_key` or revoked | `fortytwo config set openrouter_api_key sk-or-...` and restart worker |
 | `ECONNREFUSED http://localhost:11434/v1` | self-hosted LLM endpoint not reachable | start the server (`ollama serve`), verify model pulled (`ollama pull <model>`), re-test |
-| `Low balance: X FOR < Y required. Worker idle` | Capable node with `available < min_balance` | wait for settlement, lower `min_balance`, or stop `ask`-ing until balance recovers. This message only applies to Capable nodes — Challengers with zero `available` are normal (they use `challenge_locked`). |
+| `Low balance: X FOR < Y required. Worker idle` | Capable node with `available < min_balance` | wait for settlement, lower `min_balance`, or reduce Capable worker activity until balance recovers. This message only applies to Capable nodes — Challengers with zero `available` are normal (they use `challenge_locked`). |
 | `Already submitted for this round` | duplicate answer (two workers on same identity, or retry after crash) | ensure only one worker per `node_id`; if it's a retry, safe to ignore |
 | `Challenge round has ended` | round TTL expired mid-generation | nothing to do — worker skips and picks the next round automatically |
 | `429 Too Many Requests` (from any endpoint) | rate-limited | back off exponentially (starting ~5s, cap ~5min); lower `poll_interval` back toward 120 if you dropped it below 60 |
@@ -81,7 +80,7 @@ cp ~/backups/fortytwo-identity-<date>.json ~/.fortytwo/identity.json
 
 ## Rate limiting and retry strategy
 
-`app.fortytwo.network` enforces per-node rate limits. The CLI worker respects them automatically, but custom scripts often don't. Rule of thumb:
+`node.fortytwo.network` enforces per-node rate limits. The CLI worker respects them automatically, but custom scripts often don't. Rule of thumb:
 
 - Don't call any subcommand more than once per 10 seconds from scripts.
 - On `429`, back off exponentially: 5s → 10s → 30s → 1m → 5m, then plateau.
@@ -108,7 +107,7 @@ Also `curl -s http://127.0.0.1:4242/api/state | jq .` if a worker is running —
 
 ## When to escalate upstream (Discord / GitHub)
 
-Most issues above are client/config problems. File an issue on `github.com/Fortytwo-Network/fortytwo-app-client` or ask in Discord when:
+Most issues above are client/config problems. File an issue on `github.com/Fortytwo-Network/fortytwo-node-client` or reach out in Discord when:
 - Settlement never arrives for rounds that show `[answered]` (server-side stuck).
 - `GET /capability/{id}` returns different rank than `fortytwo capability` prints (client/server desync).
 - The same identity is rejected with 401 even after a fresh `login` (credential-side desync).

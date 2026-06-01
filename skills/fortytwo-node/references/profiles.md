@@ -45,7 +45,6 @@ Two mechanisms; pick one per invocation.
 ```bash
 fortytwo -p judge1 capability
 fortytwo -p answerer1 run -v
-fortytwo -p judge1 ask "question"
 ```
 
 ### `FORTYTWO_PROFILE` env (per shell / per process)

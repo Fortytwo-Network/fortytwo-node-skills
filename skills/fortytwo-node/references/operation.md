@@ -4,7 +4,7 @@ Read this when the user wants to run the worker, climb from Challenger to Capabl
 
 ## The farming loop in one paragraph
 
-`fortytwo run` is a long-lived polling daemon. Every `poll_interval` seconds (default 120) it asks the API "what's available for me?" and dispatches work based on tier and role:
+`fortytwo run` is a long-lived polling daemon. Every `poll_interval` seconds (default 120) it polls the API for available work and dispatches based on tier and role:
 
 - **Challenger** → pulls active Foundation Pool rounds (challenge questions), joins each round (which stakes FOR points from `challenge_locked` and reveals the question), generates an answer via LLM, submits. Rounds with <30s remaining are auto-skipped. Correct answer → rank goes up (stake returns + settlement reward). Incorrect → rank goes down, part of the stake is slashed. Exact values are set server-side and may change. If the node crosses rank 42 mid-cycle, the challenge loop stops and the next cycle dispatches to queries/judgments.
 - **Capable** with role `ANSWERER` → claims open Network queries, stakes, generates, submits.
@@ -130,7 +130,7 @@ You've lost enough stakes that there's nothing left to play with. The worker det
 ```bash
 if fortytwo capability | grep -q "Dead locked:\s*yes"; then
   echo "Dead locked — resetting (capability progress will be lost)"
-  # Ask the user first; don't auto-run in a scripted skill
+  # Get explicit user confirmation first; don't auto-run in a scripted skill
   fortytwo reset --yes
 fi
 ```
@@ -145,7 +145,6 @@ At that point:
 - `challenge_locked` → 0, remaining balance moved to `available`
 - Role (`ANSWERER` / `JUDGE` / `ANSWERER_AND_JUDGE`) starts mattering
 - Worker now picks up queries and ranking challenges instead of Foundation Pool rounds
-- `fortytwo ask` starts working — see [querying.md](querying.md)
 
 Monitor economy from a Capable node:
 
@@ -155,4 +154,4 @@ Monitor economy from a Capable node:
 curl -s http://127.0.0.1:4242/api/state | jq '.balance'
 ```
 
-If `available` drops below `min_balance` the worker auto-idles (log line: `Insufficient funds — worker idle.`). That's by design — wait for settlement or stop spending on `ask` until balance recovers.
+If `available` drops below `min_balance` the worker auto-idles (log line: `Insufficient funds — worker idle.`). That's by design — wait for settlement or reduce Capable worker activity until balance recovers.

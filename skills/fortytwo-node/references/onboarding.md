@@ -6,7 +6,7 @@ This is for anything that creates or moves identity: first-time setup, restoring
 
 - Node.js 20+ and `@fortytwo-network/fortytwo-cli` installed globally
 - **Either** an OpenRouter API key (`sk-or-…` from https://openrouter.ai) **or** an OpenAI-compatible local LLM endpoint (Ollama on `http://localhost:11434/v1`, vLLM, llama.cpp, LM Studio, …)
-- Access to `https://app.fortytwo.network/api` (reachable from the host; firewalls/proxies can break registration)
+- Access to `https://node.fortytwo.network/api` (reachable from the host; firewalls/proxies can break registration)
 
 ## `fortytwo setup` — first-time registration
 
