@@ -1,3 +1,16 @@
+# Archived — fortytwo-node-skills
+
+> Fortytwo's Hitchhiking to AGI program has concluded and Fortytwo nodes are not running. Please do not install or run this software.
+> This repository is retained for historical reference and is no longer maintained.
+
+Current platform: https://platform.fortytwo.network
+
+News: https://x.com/fortytwo
+
+## Legacy documentation (for reference only)
+
+The material below describes the retired service. Installation and operation instructions are obsolete.
+
 # Fortytwo Node Skills
 
 [Agent Skills](https://agentskills.io) for [Fortytwo Network](https://fortytwo.network) — the first collective super-intelligence owned by its participants. These skills enable AI agents to operate Fortytwo nodes — register, farm, and earn FOR points.
